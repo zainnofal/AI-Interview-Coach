@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interview Coach</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        :root {
+            --bg-dark: #0f1729;
+            --card-dark: #1a2236;
+            --card-header: #252f44;
+            --primary-color: #3e6dda;
+            --primary-hover: #2d5cc9;
+            --secondary-color: #586a94;
+            --text-primary: #f0f2f5;
+            --text-secondary: #a0aec0;
+            --accent-color: #4a6bbd;
+            --danger: #dc3545;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --border-color: #343d52;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Poppins', 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 860px;
+            padding: 1.5rem;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: var(--card-dark);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: var(--card-header);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.2rem;
+            font-weight: 600;
+        }
+
+        .card-body {
+            padding: 1.2rem;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--text-primary);
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-control, .form-select {
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 6px;
+            padding: 0.6rem 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            margin-bottom: 0.75rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: #333;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
+            color: var(--text-primary);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            border: none;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: #000;
+            border: none;
+        }
+
+        .recording-indicator {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: var(--danger);
+            margin-right: 8px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        .job-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+            background-color: #242424;
+        }
+
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+            border-color: var(--primary-color);
+        }
+
+        .interview-history {
+            max-height: 400px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--secondary-color) var(--card-dark);
+        }
+
+        .interview-history::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .interview-history::-webkit-scrollbar-track {
+            background: var(--card-dark);
+        }
+
+        .interview-history::-webkit-scrollbar-thumb {
+            background-color: var(--secondary-color);
+            border-radius: 3px;
+        }
+
+        .suggested-job {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin: 5px;
+            padding: 8px 15px;
+            background-color: #242424;
+            border-radius: 20px;
+            color: var(--text-primary);
+            border: 1px solid #333;
+        }
+
+        .suggested-job:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(99, 102, 241, 0.25);
+        }
+
+        .settings-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--card-header);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            color: var(--text-primary);
+        }
+
+        .recording-timer {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 10px;
+            color: var(--accent-color);
+        }
+
+        .voice-status {
+            margin-top: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .voice-status.using-elevenlabs {
+            background-color: rgba(34, 197, 94, 0.2);
+            color: var(--success);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .voice-status.using-openai {
+            background-color: rgba(56, 189, 248, 0.2);
+            color: var(--accent-color);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .voice-status.using-system {
+            background-color: rgba(234, 179, 8, 0.2);
+            color: var(--warning);
+            border: 1px solid rgba(234, 179, 8, 0.3);
+        }
+
+        .alert {
+            background-color: rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .alert-info {
+            background-color: rgba(62, 109, 218, 0.08);
+            border-color: rgba(62, 109, 218, 0.2);
+            color: var(--accent-color);
+        }
+
+        .alert-danger {
+            background-color: rgba(220, 53, 69, 0.08);
+            border-color: rgba(220, 53, 69, 0.2);
+            color: var(--danger);
+        }
+
+        .alert-success {
+            background-color: rgba(16, 185, 129, 0.08);
+            border-color: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .alert-primary {
+            background-color: rgba(62, 109, 218, 0.08);
+            border-color: rgba(62, 109, 218, 0.2);
+            color: var(--primary-color);
+        }
+
+        .alert-secondary {
+            background-color: rgba(88, 106, 148, 0.08);
+            border-color: rgba(88, 106, 148, 0.2);
+            color: var(--secondary-color);
+        }
+
+        .lead {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+
+        .text-muted {
+            color: var(--text-secondary) !important;
+            font-size: 0.85rem;
+        }
+
+        /* Gradient header for page title */
+        .gradient-header {
+            color: var(--text-primary);
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 1.5rem;
+            font-size: 2.5rem;
+            text-align: center;
+        }
+
+        /* Professional button styling */
+        .btn-interview {
+            padding: 0.7rem 1.5rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            text-transform: none;
+            font-size: 0.95rem;
+        }
+
+        /* Add a professional glow to the recording button */
+        .btn-record {
+            box-shadow: 0 0 10px rgba(62, 109, 218, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-record:hover {
+            box-shadow: 0 0 15px rgba(62, 109, 218, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-record::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(to bottom right, rgba(255,255,255,0), rgba(255,255,255,0.1), rgba(255,255,255,0));
+            transform: rotate(30deg);
+            transition: transform 0.7s ease;
+        }
+
+        .btn-record:hover::after {
+            transform: rotate(30deg) translate(50%, 50%);
+        }
+
+        /* Modal styling */
+        .modal-content {
+            background-color: var(--card-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--card-header);
+        }
+        
+        .modal-footer {
+            border-top: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body class="gradient-bg">
+    <div class="container">
+        <header class="text-center mb-4">
+            <div class="d-flex align-items-center justify-content-center mb-2">
+                <i class="fas fa-briefcase me-2" style="font-size: 1.8rem; color: var(--primary-color);"></i>
+                <h1 class="gradient-header m-0">AI Interview Coach</h1>
+            </div>
+            <p class="text-secondary">Professional interview practice with instant feedback</p>
+        </header>
+        
+        <div id="job-selection" class="card glass-card p-4">
+            <h2 class="mb-3">Enter the job role you're preparing for:</h2>
+            
+            <div id="voice-status-display" class="text-center mb-3">
+                <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                Checking voice status...
+            </div>
+            
+            <div class="input-group mb-3">
+                <input type="text" id="job-input" class="form-control form-control-lg" 
+                    placeholder="e.g. Software Engineer, Data Scientist..." 
+                    aria-label="Job role">
+                <button class="btn btn-primary btn-interview btn-glow" type="button" id="job-submit-btn">
+                    <i class="fas fa-play me-2"></i>Start Interview
+                </button>
+            </div>
+            
+            <div class="form-group mb-4">
+                <label for="num-questions" class="mb-2">Number of questions:</label>
+                <select class="form-select" id="num-questions">
+                    <option value="3">3 questions</option>
+                    <option value="4" selected>4 questions</option>
+                    <option value="5">5 questions</option>
+                    <option value="6">6 questions</option>
+                </select>
+            </div>
+            
+            <div class="form-group mb-4">
+                <label class="mb-2">Choose your interviewer:</label>
+                <select class="form-select" id="interviewer-voice">
+                    <option value="shimmer|Kashmala" selected>Kashmala (Female, Bright)</option>
+                    <option value="nova|Bushra">Bushra (Female, Warm)</option>
+                    <option value="echo|Muzammil">Muzammil (Male, Deep)</option>
+                    <option value="fable|Musharraf">Musharraf (Calm, Storyteller)</option>
+                    <option value="onyx|Sultan">Sultan (Male, Authoritative)</option>
+                    <option value="alloy|Alex">Alex (Neutral)</option>
+                </select>
+            </div>
+            
+            <div>
+                <h5 class="mb-3">Suggested job roles:</h5>
+                <div id="suggested-jobs-container" class="mb-3">
+                    <div class="d-flex flex-wrap" id="suggested-jobs">
+                        <span class="spinner-border spinner-border-sm text-primary me-2" role="status"></span> Loading suggestions...
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <small class="text-muted">Enter any job role you want to practice interviewing for.<br>
+                The system will generate appropriate interview questions for that role.</small>
+            </div>
+        </div>
+        
+        <div id="interview-section" class="card glass-card p-4" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 id="job-title">Interview: <span id="selected-job"></span></h2>
+                <div>
+                    <button class="btn btn-danger btn-glow" onclick="resetInterview()">
+                        <i class="fas fa-times me-2"></i>End Interview
+                    </button>
+                </div>
+            </div>
+            
+            <div id="current-status" class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>Waiting to start...
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4><i class="fas fa-question-circle me-2"></i>Current Question</h4>
+                </div>
+                <div class="card-body">
+                    <p id="current-question" class="lead">Question will appear here...</p>
+                    <div class="text-center mt-4">
+                        <button id="record-btn" class="btn btn-primary btn-lg btn-interview btn-record btn-glow" onclick="startRecording()" disabled>
+                            <i class="fas fa-microphone me-2"></i>Record Answer
+                        </button>
+                        <button id="stop-recording-btn" class="btn btn-danger btn-lg btn-interview ms-2 btn-glow" onclick="stopRecording()" style="display:none;">
+                            <i class="fas fa-stop-circle me-2"></i>Stop Recording
+                        </button>
+                        <button id="reset-recording-btn" class="btn btn-warning btn-sm ms-3" 
+                            onclick="resetRecordingState()" style="display:none;">
+                            <i class="fas fa-exclamation-triangle me-1"></i> Reset Recording
+                        </button>
+                        <div id="recording-status" class="mt-3" style="display: none;">
+                            <span class="recording-indicator"></span> Recording in progress...
+                            <div class="recording-timer mt-2" id="recording-timer">00:00</div>
+                            <div class="recording-note mt-2">
+                                <small class="text-muted">Speak as long as you need. Press "Stop Recording" when finished.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-history me-2"></i>Interview History</h4>
+                </div>
+                <div class="card-body interview-history">
+                    <div id="interview-log">
+                        <!-- Interview history will be added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn btn-secondary settings-btn" data-bs-toggle="modal" data-bs-target="#settingsModal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
+            <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34z"/>
+        </svg>
+    </button>
+
+    <!-- Settings Modal -->
+    <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="settingsModalLabel">Voice Settings</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="silenceDuration" class="form-label">Silence Duration to Stop Recording (seconds):</label>
+                        <input type="range" class="form-range" min="1" max="5" step="0.5" id="silenceDuration" value="2">
+                        <div class="text-center" id="silenceDurationValue">2 seconds</div>
+                        <small class="text-muted">How long to wait after you stop speaking before ending recording</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>Voice System</h6>
+                        <div id="voice-status-modal" class="alert alert-secondary">
+                            Checking voice status...
+                        </div>
+                        <div id="voice-details" class="small" style="margin-top: 10px; display: none;"></div>
+                        <button class="btn btn-primary" id="check-voice-btn">Refresh Voice Status</button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="save-settings-btn">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let jobSelected = false;
+        let statePollingInterval = null;
+        let silenceDuration = 2.0;
+        let timerInterval = null;
+        let usingOpenAI = false;
+        let activeVoice = "system";
+        let isPolling = false;  // Track if we're currently polling the state
+        let recordingTimerInterval;
+        let recordingSeconds = 0;
+        let state = {  // Add a state object to track current status
+            is_recording: false,
+            is_processing: false,
+            is_complete: false,
+            current_question_index: -1,
+            questions: [],
+            answers: [],
+            feedbacks: []
+        };
+        
+        // Load suggested job roles when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSuggestedJobs();
+            checkVoiceStatus();
+            
+            // Update silence duration display when slider changes
+            document.getElementById('silenceDuration').addEventListener('input', function() {
+                silenceDuration = parseFloat(this.value);
+                document.getElementById('silenceDurationValue').textContent = silenceDuration + ' seconds';
+            });
+            
+            // Handle enter key in job input
+            document.getElementById('job-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    startInterviewWithInputJob();
+                }
+            });
+            
+            // Handle submit button click
+            document.getElementById('job-submit-btn').addEventListener('click', startInterviewWithInputJob);
+            
+            // Set up the check voice button
+            document.getElementById('check-voice-btn').addEventListener('click', checkVoiceStatus);
+            
+            // Set up save settings button
+            document.getElementById('save-settings-btn').addEventListener('click', saveSettings);
+        });
+        
+        function checkVoiceStatus() {
+            // Update both displays
+            document.getElementById('voice-status-display').innerHTML = '<div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div> Checking voice status...';
+            document.getElementById('voice-status-modal').textContent = 'Checking voice status...';
+            document.getElementById('voice-details').style.display = 'none';
+            
+            fetch('/api/voice_status')
+            .then(response => response.json())
+            .then(data => {
+                console.log("Voice status:", data);
+                usingOpenAI = data.using_openai_tts;
+                activeVoice = data.active_voice;
+                updateVoiceDisplay(data);
+            })
+            .catch(error => {
+                console.error('Error checking voice status:', error);
+                document.getElementById('voice-status-display').innerHTML = '<div class="text-danger">Error checking voice status</div>';
+                document.getElementById('voice-status-modal').textContent = 'Error checking voice status';
+            });
+        }
+        
+        function updateVoiceDisplay(data) {
+            // Update main display
+            const displayEl = document.getElementById('voice-status-display');
+            const modalEl = document.getElementById('voice-status-modal');
+            const detailsEl = document.getElementById('voice-details');
+            
+            if (data.using_openai_tts && data.active_voice === 'openai') {
+                displayEl.innerHTML = '<div class="voice-status using-openai">✓ Using OpenAI TTS voice</div>';
+                modalEl.className = 'alert alert-primary';
+                modalEl.textContent = 'Using OpenAI Text-to-Speech';
+            } else {
+                displayEl.innerHTML = '<div class="voice-status using-system">ℹ️ Using system voice</div>';
+                modalEl.className = 'alert alert-warning';
+                modalEl.textContent = 'Using system voice';
+            }
+            
+            // Add voice service details
+            let detailsHTML = '<h6 class="mt-3">Voice Service Status:</h6><ul class="list-group">';
+            
+            // OpenAI TTS status
+            if (typeof data.status.openai === 'string') {
+                detailsHTML += `<li class="list-group-item ${data.active_voice === 'openai' ? 'active' : ''}">
+                    <strong>OpenAI TTS:</strong> ${data.status.openai}
+                </li>`;
+            }
+            
+            detailsHTML += '</ul>';
+            detailsEl.innerHTML = detailsHTML;
+            detailsEl.style.display = 'block';
+        }
+        
+        function saveSettings() {
+            // Update silence duration settings
+            // No other specific actions needed as we're using the value directly
+        }
+        
+        function loadSuggestedJobs() {
+            fetch('/api/jobs')
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('suggested-jobs');
+                container.innerHTML = '';
+                
+                data.jobs.forEach(job => {
+                    const jobElement = document.createElement('span');
+                    jobElement.className = 'suggested-job';
+                    jobElement.textContent = job;
+                    jobElement.onclick = function() {
+                        selectPredefinedJob(job);
+                    };
+                    container.appendChild(jobElement);
+                });
+            })
+            .catch(error => {
+                console.error('Error loading suggested jobs:', error);
+                document.getElementById('suggested-jobs').innerHTML = 'Error loading suggestions';
+            });
+        }
+        
+        function startInterviewWithInputJob() {
+            const jobInput = document.getElementById('job-input');
+            const job = jobInput.value.trim();
+            
+            if (job) {
+                selectJob(job);
+            } else {
+                alert('Please enter a job role');
+                jobInput.focus();
+            }
+        }
+        
+        function selectPredefinedJob(job) {
+            document.getElementById('job-input').value = job;
+            selectJob(job);
+        }
+        
+        function selectJob(job) {
+            if (jobSelected) return;
+            
+            const numQuestions = document.getElementById('num-questions').value;
+            const voiceSelection = document.getElementById('interviewer-voice').value;
+            
+            // Split the voice and name
+            const [voiceType, interviewerName] = voiceSelection.split('|');
+            
+            document.getElementById('selected-job').textContent = job;
+            document.getElementById('job-selection').style.display = 'none';
+            document.getElementById('interview-section').style.display = 'block';
+            document.getElementById('current-status').textContent = 'Starting interview...';
+            
+            // Start the interview
+            fetch('/api/start', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    job: job,
+                    num_questions: parseInt(numQuestions),
+                    interviewer_name: interviewerName,
+                    interviewer_voice: voiceType
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    jobSelected = true;
+                    usingOpenAI = data.using_openai_tts;
+                    activeVoice = data.active_voice;
+                    startStatePolling();
+                } else {
+                    alert('Error: ' + data.message);
+                    resetInterview();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while starting the interview.');
+                resetInterview();
+            });
+        }
+        
+        function startStatePolling() {
+            if (statePollingInterval) {
+                clearInterval(statePollingInterval);
+            }
+            isPolling = true;
+            // Poll more frequently to ensure more responsive UI
+            statePollingInterval = setInterval(updateState, 500);
+            // Do an immediate update
+            updateState();
+        }
+        
+        function updateState() {
+            if (isPolling) {
+                isPolling = false;  // Prevent overlapping requests
+                
+                fetch('/api/state')
+                .then(response => response.json())
+                .then(serverState => {
+                    console.log("Current state:", serverState);  // Add debug logging
+                    
+                    // Update our local state object
+                    state = serverState;
+                    
+                    // Update current question section
+                    if (state.current_question_index >= 1 && state.current_question_index < state.questions.length) {
+                        const currentQuestion = state.questions[state.current_question_index];
+                        const questionElement = document.getElementById('current-question');
+                        if (questionElement.textContent !== currentQuestion) {
+                            console.log("Updating current question to:", currentQuestion);
+                            questionElement.textContent = currentQuestion;
+                        }
+                    }
+                    
+                    // Update recording button state
+                    document.getElementById('record-btn').disabled = 
+                        state.is_recording || state.is_processing || state.is_complete;
+                    
+                    // Show/hide recording controls based on state
+                    if (state.is_recording) {
+                        document.getElementById('record-btn').style.display = 'none';
+                        document.getElementById('stop-recording-btn').style.display = 'inline-block';
+                        document.getElementById('recording-status').style.display = 'block';
+                        document.getElementById('reset-recording-btn').style.display = 'inline-block';
+                    } else {
+                        document.getElementById('record-btn').style.display = 'inline-block';
+                        document.getElementById('stop-recording-btn').style.display = 'none';
+                        document.getElementById('recording-status').style.display = 'none';
+                        document.getElementById('reset-recording-btn').style.display = 'none';
+                    }
+                    
+                    // Update status message
+                    let statusMessage = "";
+                    if (state.is_complete) {
+                        statusMessage = '<i class="fas fa-check-circle me-2"></i>Interview complete!';
+                    } else if (state.is_recording) {
+                        statusMessage = '<i class="fas fa-microphone me-2"></i>Recording your answer...';
+                    } else if (state.is_processing) {
+                        statusMessage = '<i class="fas fa-cog me-2"></i>Processing your answer...';
+                    } else if (state.current_question_index >= 0) {
+                        statusMessage = '<i class="fas fa-info-circle me-2"></i>Ready for your answer';
+                    }
+                    document.getElementById('current-status').innerHTML = statusMessage;
+                    
+                    // Update interview log
+                    updateInterviewLog(state);
+                    
+                    // If interview is complete, stop polling
+                    if (state.is_complete) {
+                        clearInterval(statePollingInterval);
+                    }
+                    
+                    isPolling = true;  // Allow polling to continue
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    isPolling = true;  // Allow polling to continue even after error
+                });
+            }
+        }
+        
+        function updateInterviewLog(state) {
+            const logElement = document.getElementById('interview-log');
+            logElement.innerHTML = '';
+            
+            // Start at index 1 to skip the welcome message
+            for (let i = 1; i < state.questions.length; i++) {
+                // Adjust display index to be 1-based (since we're skipping index 0)
+                const displayIndex = i;
+                
+                if (i < state.current_question_index || state.is_complete) {
+                    const questionDiv = document.createElement('div');
+                    questionDiv.className = 'mb-4';
+                    
+                    // Question
+                    const questionElement = document.createElement('div');
+                    questionElement.className = 'alert alert-primary';
+                    questionElement.innerHTML = `<strong>Q${displayIndex}:</strong> ${state.questions[i]}`;
+                    questionDiv.appendChild(questionElement);
+                    
+                    // Answer - adjust index to match the answers array
+                    const answerIndex = i - 1;  // Answers start at index 0 for question at index 1
+                    if (answerIndex < state.answers.length) {
+                        const answerElement = document.createElement('div');
+                        answerElement.className = 'alert alert-secondary ms-4 mb-2';
+                        answerElement.innerHTML = `<strong>Your Answer:</strong> ${state.answers[answerIndex]}`;
+                        questionDiv.appendChild(answerElement);
+                    }
+                    
+                    // Feedback - adjust index to match the feedbacks array
+                    if (answerIndex < state.feedbacks.length) {
+                        const feedbackElement = document.createElement('div');
+                        feedbackElement.className = 'alert alert-success ms-4';
+                        feedbackElement.innerHTML = `<strong>Feedback:</strong> ${state.feedbacks[answerIndex]}`;
+                        questionDiv.appendChild(feedbackElement);
+                    }
+                    
+                    logElement.appendChild(questionDiv);
+                }
+            }
+        }
+        
+        function startRecordingTimer() {
+            recordingSeconds = 0;
+            updateTimerDisplay();
+            recordingTimerInterval = setInterval(updateTimerDisplay, 1000);
+        }
+        
+        function stopRecordingTimer() {
+            clearInterval(recordingTimerInterval);
+            recordingSeconds = 0;
+            updateTimerDisplay();
+        }
+        
+        function updateTimerDisplay() {
+            recordingSeconds++;
+            const minutes = Math.floor(recordingSeconds / 60);
+            const seconds = recordingSeconds % 60;
+            document.getElementById('recording-timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        function startRecording() {
+            // Check if recording is already in progress
+            if (state.is_recording || state.is_processing) {
+                console.log("Can't start recording - already recording or processing");
+                return;
+            }
+            
+            console.log("Starting recording...");
+            document.getElementById('current-status').innerHTML = 
+                '<i class="fas fa-circle-notch fa-spin me-2"></i>Starting recording...';
+            
+            fetch('/api/record', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Recording response:", data);
+                if (data.status === 'success') {
+                    // Manually update UI immediately for better responsiveness
+                    state.is_recording = true;
+                    document.getElementById('record-btn').style.display = 'none';
+                    document.getElementById('stop-recording-btn').style.display = 'inline-block';
+                    document.getElementById('recording-status').style.display = 'block';
+                    document.getElementById('reset-recording-btn').style.display = 'inline-block';
+                    document.getElementById('current-status').innerHTML = 
+                        '<i class="fas fa-microphone me-2"></i>Recording in progress... Speak your answer.';
+                    
+                    // Start recording timer
+                    startRecordingTimer();
+                } else {
+                    document.getElementById('current-status').innerHTML = 
+                        `<i class="fas fa-exclamation-triangle me-2"></i>Error: ${data.message}`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('current-status').innerHTML = 
+                    '<i class="fas fa-exclamation-triangle me-2"></i>Error starting recording';
+            });
+        }
+        
+        function stopRecording() {
+            if (!state.is_recording) {
+                console.log("Can't stop recording - not currently recording");
+                return;
+            }
+            
+            console.log("Stopping recording...");
+            document.getElementById('current-status').innerHTML = 
+                '<i class="fas fa-circle-notch fa-spin me-2"></i>Stopping recording...';
+            document.getElementById('stop-recording-btn').disabled = true;
+            
+            fetch('/api/stop_recording', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Stop recording response:", data);
+                if (data.status === 'success') {
+                    // Manually update UI immediately for better responsiveness
+                    state.is_recording = false;
+                    state.is_processing = true;
+                    document.getElementById('stop-recording-btn').style.display = 'none';
+                    document.getElementById('recording-status').style.display = 'none';
+                    document.getElementById('reset-recording-btn').style.display = 'none';
+                    document.getElementById('current-status').innerHTML = 
+                        '<i class="fas fa-cog fa-spin me-2"></i>Processing your answer...';
+                    
+                    // Stop recording timer
+                    stopRecordingTimer();
+                } else {
+                    document.getElementById('current-status').innerHTML = 
+                        `<i class="fas fa-exclamation-triangle me-2"></i>Error: ${data.message}`;
+                    document.getElementById('stop-recording-btn').disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('current-status').innerHTML = 
+                    '<i class="fas fa-exclamation-triangle me-2"></i>Error stopping recording';
+                document.getElementById('stop-recording-btn').disabled = false;
+            });
+        }
+        
+        function resetRecordingState() {
+            console.log("Emergency reset button clicked");
+            document.getElementById('reset-recording-btn').textContent = "Resetting...";
+            document.getElementById('reset-recording-btn').disabled = true;
+            
+            fetch('/api/reset_recording', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Reset recording response:", data);
+                if (data.status === 'success') {
+                    // Force UI reset immediately
+                    state.is_recording = false;
+                    state.is_processing = false;
+                    
+                    document.getElementById('record-btn').disabled = false;
+                    document.getElementById('record-btn').style.display = 'inline-block';
+                    document.getElementById('recording-status').style.display = 'none';
+                    document.getElementById('stop-recording-btn').style.display = 'none';
+                    document.getElementById('reset-recording-btn').style.display = 'none';
+                    document.getElementById('current-status').innerHTML = 
+                        '<i class="fas fa-info-circle me-2"></i>Ready for your answer';
+                    
+                    // Stop the timer if it's running
+                    stopRecordingTimer();
+                    
+                    console.log("Recording state has been reset");
+                } else {
+                    console.error("Error resetting recording state:", data.message);
+                }
+                
+                // Reset the button text and state
+                document.getElementById('reset-recording-btn').innerHTML = 
+                    '<i class="fas fa-exclamation-triangle me-1"></i> Reset Recording';
+                document.getElementById('reset-recording-btn').disabled = false;
+            })
+            .catch(error => {
+                console.error('Error resetting recording state:', error);
+                
+                // Reset the button text and state
+                document.getElementById('reset-recording-btn').innerHTML = 
+                    '<i class="fas fa-exclamation-triangle me-1"></i> Reset Recording';
+                document.getElementById('reset-recording-btn').disabled = false;
+            });
+        }
+        
+        function resetInterview() {
+            if (statePollingInterval) {
+                clearInterval(statePollingInterval);
+            }
+            
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            // Reset recording state as a safety measure
+            resetRecordingState();
+            
+            jobSelected = false;
+            document.getElementById('job-selection').style.display = 'block';
+            document.getElementById('interview-section').style.display = 'none';
+            document.getElementById('interview-log').innerHTML = '';
+            document.getElementById('current-question').textContent = 'Question will appear here...';
+            document.getElementById('record-btn').disabled = true;
+            document.getElementById('recording-status').style.display = 'none';
+            document.getElementById('stop-recording-btn').style.display = 'none';
+            document.getElementById('reset-recording-btn').style.display = 'none';
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,10 @@
+flask>=2.3.0
+openai>=1.0.0
+openai-whisper>=20230918
+scipy>=1.11.0
+sounddevice>=0.4.6
+# elevenlabs may have compatibility issues on Apple Silicon
+# if you encounter errors, use the fallback TTS in speaker.py
+elevenlabs>=0.2.24
+pyttsx3>=2.90
+numpy>=1.24.0 
